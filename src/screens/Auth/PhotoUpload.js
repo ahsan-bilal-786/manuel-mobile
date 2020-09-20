@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Text, Image, Button} from 'react-native-elements';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {styles} from 'screens/Auth/styles';
-import avatar from '../../assets/images/avatar.png';
+import avatar from '../../assets/images/photo_1.jpg';
 
 const PhotoUploadScreen = ({navigation}) => {
   return (

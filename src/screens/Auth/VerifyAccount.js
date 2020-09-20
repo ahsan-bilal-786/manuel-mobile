@@ -1,15 +1,30 @@
 import * as React from 'react';
-import {Button, View, Text} from 'react-native';
+import {Text, Input, Button} from 'react-native-elements';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {styles, textStyles} from 'screens/Auth/styles';
 
 const VerifyAccountScreen = ({navigation}) => {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Verify Account Screen</Text>
-      <Button
-        title="Go to Profile"
-        onPress={() => navigation.navigate('Profile')}
+    <SafeAreaView style={[styles.wrapper, styles.alignTop]}>
+      <Text h1 style={styles.heading}>
+        Fiverr.
+      </Text>
+
+      <Input
+        placeholder="Verification Code"
+        errorMessage=""
+        placeholderTextColor={textStyles.color}
+        inputContainerStyle={textStyles}
+        errorStyle={textStyles}
+        style={textStyles}
       />
-    </View>
+
+      <Button
+        title="Verify"
+        containerStyle={styles.submitBtn}
+        onPress={() => navigation.navigate('Photo')}
+      />
+    </SafeAreaView>
   );
 };
 

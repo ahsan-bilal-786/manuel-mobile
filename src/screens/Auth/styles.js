@@ -25,4 +25,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     textDecorationLine: 'underline',
   },
+  alignTop: {
+    justifyContent: 'flex-start',
+  },
 });

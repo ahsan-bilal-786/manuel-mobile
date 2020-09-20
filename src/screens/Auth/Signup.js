@@ -1,16 +1,67 @@
 import * as React from 'react';
-import {Button, View, Text} from 'react-native';
+import {Text, Input, Button} from 'react-native-elements';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {styles, textStyles} from 'screens/Auth/styles';
 
-const SigupScreen = ({navigation}) => {
+const SignUpScreen = ({navigation}) => {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Sigup Screen</Text>
+    <SafeAreaView style={styles.wrapper}>
+      <Text h1 style={styles.heading}>
+        Fiverr.
+      </Text>
+
+      <Input
+        placeholder="Email"
+        errorMessage=""
+        placeholderTextColor={textStyles.color}
+        inputContainerStyle={textStyles}
+        errorStyle={textStyles}
+        style={textStyles}
+      />
+
+      <Input
+        placeholder="Password"
+        secureTextEntry={true}
+        errorMessage=""
+        placeholderTextColor={textStyles.color}
+        errorStyle={textStyles}
+        style={textStyles}
+      />
+
+      <Input
+        placeholder="Confirm Password"
+        secureTextEntry={true}
+        errorMessage=""
+        placeholderTextColor={textStyles.color}
+        errorStyle={textStyles}
+        style={textStyles}
+      />
+
+      <Input
+        placeholder="First Name"
+        errorMessage=""
+        placeholderTextColor={textStyles.color}
+        inputContainerStyle={textStyles}
+        errorStyle={textStyles}
+        style={textStyles}
+      />
+
+      <Input
+        placeholder="Last Name"
+        errorMessage=""
+        placeholderTextColor={textStyles.color}
+        inputContainerStyle={textStyles}
+        errorStyle={textStyles}
+        style={textStyles}
+      />
+
       <Button
-        title="Go to VerifyAccount"
+        title="Signup"
+        containerStyle={styles.submitBtn}
         onPress={() => navigation.navigate('VerifyAccount')}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default SigupScreen;
+export default SignUpScreen;

@@ -6,6 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from 'screens/Auth/Login';
 import SignupScreen from 'screens/Auth/Signup';
 import VerifyAccountScreen from 'screens/Auth/VerifyAccount';
+import PhotoUpload from 'screens/Auth/PhotoUpload';
 import ProfileScreen from 'screens/Profile';
 
 const Stack = createStackNavigator();
@@ -29,6 +30,11 @@ const App = () => {
             <Stack.Screen
               name="VerifyAccount"
               component={VerifyAccountScreen}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="PhotoUpload"
+              component={PhotoUpload}
               options={{headerShown: false}}
             />
             <Stack.Screen

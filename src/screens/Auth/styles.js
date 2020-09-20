@@ -28,4 +28,5 @@ export const styles = StyleSheet.create({
   alignTop: {
     justifyContent: 'flex-start',
   },
+  thumbnail: {width: 100, height: 100, marginBottom: 20},
 });

@@ -18,6 +18,7 @@ module.exports = {
         ],
         alias: {
           screens: './src/screens',
+          assets: './src/assets',
         },
       },
     ],

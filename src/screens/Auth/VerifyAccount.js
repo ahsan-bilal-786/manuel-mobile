@@ -22,7 +22,7 @@ const VerifyAccountScreen = ({navigation}) => {
       <Button
         title="Verify"
         containerStyle={styles.submitBtn}
-        onPress={() => navigation.navigate('Photo')}
+        onPress={() => navigation.navigate('PhotoUpload')}
       />
     </SafeAreaView>
   );

@@ -5,7 +5,7 @@ const instance = axios.create({
 });
 
 export const registerToken = (token) => {
-  axios.defaults.headers.common.Authorization = `bearer ${token}`;
+  instance.defaults.headers.common.Authorization = `bearer ${token}`;
 };
 
 export const signup = (email, password, name, contact) => {
@@ -26,9 +26,9 @@ export const login = (email, password) => {
   return instance.post('/users/login', payload);
 };
 
-export const verifyUserAccount = (token) => {
+export const verifyUserAccount = (verificationCode) => {
   const payload = {
-    token,
+    verificationCode,
   };
   return instance.post('/users/verify', payload);
 };

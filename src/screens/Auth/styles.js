@@ -35,4 +35,7 @@ export const styles = StyleSheet.create({
     borderColor: '#CCC',
     borderWidth: 5,
   },
+  errorMessage: {
+    ...textStyles,
+  },
 });

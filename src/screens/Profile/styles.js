@@ -13,10 +13,12 @@ export const styles = StyleSheet.create({
     borderColor: '#CCC',
     position: 'absolute',
     bottom: -70,
+    backgroundColor: '#FFF',
   },
   galleryWrapper: {flex: 1, flexDirection: 'column', margin: 1},
   galleryImage: {
     width: 120,
     height: 120,
   },
+  settingsIcon: {position: 'absolute', top: 20, right: 0, zIndex: 1},
 });

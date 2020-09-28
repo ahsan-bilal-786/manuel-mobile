@@ -1,10 +1,13 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import {FlatList, View, Text, ImageBackground, Image} from 'react-native';
+import {BottomSheet, ListItem, Icon} from 'react-native-elements';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {flushToken, getUserProfile} from 'api';
+import {deleteUserToken} from 'utils/asyncStorage';
 import {styles} from 'screens/Profile/styles';
 import cover from '../../assets/images/cover.jpg';
+import avatar from '../../assets/images/avatar.png';
 import photo_1 from '../../assets/images/photo_1.jpg';
-import photo_2 from '../../assets/images/photo_2.jpg';
 import photo_3 from '../../assets/images/photo_3.jpg';
 import photo_4 from '../../assets/images/photo_4.jpg';
 import photo_5 from '../../assets/images/photo_5.jpg';
@@ -14,14 +17,51 @@ import photo_8 from '../../assets/images/photo_8.jpg';
 import photo_9 from '../../assets/images/photo_9.jpg';
 import photo_10 from '../../assets/images/photo_10.jpg';
 
+const initalValues = {
+  name: '',
+  avatar: '',
+  email: '',
+};
 const ProfileScreen = ({navigation}) => {
+  const [profile, setUserProfile] = useState(initalValues);
+  const [isVisible, setIsVisible] = useState(false);
+  const list = [
+    {
+      title: 'Back to Profile',
+      onPress: () => {
+        setIsVisible(false);
+      },
+    },
+    {
+      title: 'Logout',
+      containerStyle: {backgroundColor: 'red'},
+      titleStyle: {color: 'white'},
+      onPress: () => {
+        setIsVisible(false);
+        flushToken(null);
+        deleteUserToken();
+        navigation.navigate('Login');
+      },
+    },
+  ];
+  useEffect(() => {
+    getUserProfile().then((resp) => {
+      const {name, avatar, email} = resp.data;
+      setUserProfile({name, avatar, email});
+    });
+  }, []);
   return (
     <SafeAreaView style={styles.wrapper}>
       <View>
-        <Text style={styles.personName}>Renata Goncaives</Text>
+        <Text style={styles.personName}>{profile.name || ''}</Text>
+        <Text
+          style={{position: 'absolute', top: 20, right: 0, zIndex: 1}}
+          onPress={() => setIsVisible(true)}>
+          <Icon raised name="cog" type="font-awesome" color="#f50" />
+        </Text>
         <View style={styles.coverArea}>
           <ImageBackground source={cover} style={styles.coverImage}>
-            <Image source={photo_2} style={styles.userPhoto} />
+            <Image source={profile.avatar || avatar} style={styles.userPhoto} />
           </ImageBackground>
         </View>
       </View>
@@ -47,6 +87,18 @@ const ProfileScreen = ({navigation}) => {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
+      <BottomSheet isVisible={isVisible}>
+        {list.map((l, i) => (
+          <ListItem
+            key={i}
+            containerStyle={l.containerStyle}
+            onPress={l.onPress}>
+            <ListItem.Content>
+              <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
+            </ListItem.Content>
+          </ListItem>
+        ))}
+      </BottomSheet>
     </SafeAreaView>
   );
 };

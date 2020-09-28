@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from 'screens/Auth/Login';
 import SignupScreen from 'screens/Auth/Signup';
+import AuthLoadingScreen from 'screens/Auth/AuthLoading';
 import VerifyAccountScreen from 'screens/Auth/VerifyAccount';
 import PhotoUpload from 'screens/Auth/PhotoUpload';
 import ProfileScreen from 'screens/Profile';
@@ -16,7 +17,12 @@ const App = () => {
     <>
       <SafeAreaProvider>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Login">
+          <Stack.Navigator initialRouteName="LoginScreen">
+            <Stack.Screen
+              name="AuthLoading"
+              component={AuthLoadingScreen}
+              options={{headerShown: false}}
+            />
             <Stack.Screen
               name="Login"
               component={LoginScreen}

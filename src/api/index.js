@@ -8,6 +8,10 @@ export const registerToken = (token) => {
   instance.defaults.headers.common.Authorization = `bearer ${token}`;
 };
 
+export const flushToken = (token) => {
+  instance.defaults.headers.common.Authorization = null;
+};
+
 export const signup = (email, password, name, contact) => {
   const payload = {
     email,

@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
   submitBtn: {
     paddingHorizontal: 10,
     alignSelf: 'stretch',
+    marginBottom: 5,
   },
   join: {
     color: '#FFFFFF',

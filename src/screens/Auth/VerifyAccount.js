@@ -27,7 +27,7 @@ const VerifyAccountScreen = ({navigation}) => {
       verifyUserAccount(verificationCode)
         .then((resp) => {
           setSubmitting(false);
-          navigation.navigate('Profile');
+          navigation.navigate('PhotoUpload');
         })
         .catch((e) => {
           setSubmitting(false);

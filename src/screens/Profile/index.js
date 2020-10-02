@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {FlatList, View, Text, ImageBackground, Image} from 'react-native';
 import {BottomSheet, ListItem, Icon} from 'react-native-elements';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {flushToken, getUserProfile} from 'api';
+import {flushToken, getUserProfile, createStaticURL} from 'api';
 import {deleteUserToken} from 'utils/asyncStorage';
 import {styles} from 'screens/Profile/styles';
 import cover from '../../assets/images/cover.jpg';
@@ -33,6 +33,13 @@ const ProfileScreen = ({navigation}) => {
       },
     },
     {
+      title: 'Change Photo',
+      onPress: () => {
+        navigation.navigate('PhotoUpload');
+        setIsVisible(false);
+      },
+    },
+    {
       title: 'Logout',
       containerStyle: {backgroundColor: 'red'},
       titleStyle: {color: 'white'},
@@ -44,12 +51,18 @@ const ProfileScreen = ({navigation}) => {
       },
     },
   ];
+
   useEffect(() => {
-    getUserProfile().then((resp) => {
-      const {name, avatar, email} = resp.data;
-      setUserProfile({name, avatar, email});
+    const fetchProfile = navigation.addListener('focus', () => {
+      getUserProfile().then((resp) => {
+        const {name, avatar, email} = resp.data;
+        setUserProfile({name, avatar: createStaticURL(avatar), email});
+      });
     });
-  }, []);
+    // Return the function to fetchProfile from the event so it gets removed on unmount
+    return fetchProfile;
+  }, [navigation]);
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <View>
@@ -61,7 +74,10 @@ const ProfileScreen = ({navigation}) => {
         </Text>
         <View style={styles.coverArea}>
           <ImageBackground source={cover} style={styles.coverImage}>
-            <Image source={profile.avatar || avatar} style={styles.userPhoto} />
+            <Image
+              source={profile.avatar ? {uri: profile.avatar} : avatar}
+              style={styles.userPhoto}
+            />
           </ImageBackground>
         </View>
       </View>

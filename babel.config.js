@@ -18,6 +18,7 @@ module.exports = {
         ],
         alias: {
           screens: './src/screens',
+          components: './src/components',
           assets: './src/assets',
           utils: './src/utils',
           api: './src/api',

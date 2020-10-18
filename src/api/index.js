@@ -1,13 +1,15 @@
 import axios from 'axios';
 
-const baseURL = 'http://192.168.10.6:3001';
+const baseURL = 'http://192.168.10.2:3001';
 
 const instance = axios.create({
   baseURL,
 });
 
 export const createStaticURL = (url) => {
-  if (url) return `${baseURL}${url}`;
+  if (url) {
+    return `${baseURL}${url}`;
+  }
   return '';
 };
 
@@ -17,6 +19,14 @@ export const registerToken = (token) => {
 
 export const flushToken = (token) => {
   instance.defaults.headers.common.Authorization = null;
+};
+
+export const validateSignupCredentials = (email, password) => {
+  const payload = {
+    email,
+    password,
+  };
+  return instance.post('/users/verifySignupCred', payload);
 };
 
 export const signup = (email, password, name, contact) => {
@@ -52,7 +62,7 @@ export const uploadUserPhoto = (imageUri) => {
   const payload = new FormData();
   payload.append('image', {
     uri: Platform.OS === 'android' ? imageUri : imageUri.replace('file://', ''),
-    name: `profile.jpg`,
+    name: 'profile.jpg',
     type: 'image/jpeg',
   });
   return instance.post('/users/photo', payload, {

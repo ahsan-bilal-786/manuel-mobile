@@ -9,6 +9,7 @@ import AuthLoadingScreen from 'screens/Auth/AuthLoading';
 import VerifyAccountScreen from 'screens/Auth/VerifyAccount';
 import PhotoUpload from 'screens/Auth/PhotoUpload';
 import ProfileScreen from 'screens/Profile';
+import EventsScreen from 'screens/Events';
 
 const Stack = createStackNavigator();
 
@@ -46,6 +47,11 @@ const App = () => {
             <Stack.Screen
               name="Profile"
               component={ProfileScreen}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Events"
+              component={EventsScreen}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

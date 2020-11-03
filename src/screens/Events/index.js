@@ -31,7 +31,7 @@ const RightComponent = ({link, icon}) => {
 
 
 const EventScreen = ({navigation}) => {
-  const [activeView, handleActiveView] = useState(view.form);
+  const [activeView, handleActiveView] = useState(view.list);
   return (
     <>
       <Header

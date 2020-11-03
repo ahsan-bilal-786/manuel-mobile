@@ -25,12 +25,12 @@ const pets = [
 const successMessage = "The Event has been successfully saved.";
 
 const initialValues  = {
-  title: "Vent # 22",
-  startDate: new Date(),
-  startTime: new Date(),
-  endDate: new Date(),
-  endTime: new Date(),
-  petId: "Luna"
+  title: "",
+  startDate: "",
+  startTime: "",
+  endDate: "",
+  endTime: "",
+  petId: ""
 }
 
 const validationSchema = Yup.object().shape({

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, View, Text, ImageBackground, Image} from 'react-native';
+import {FlatList, View, Text, ImageBackground, Image, TouchableOpacity} from 'react-native';
 import {BottomSheet, ListItem, Icon} from 'react-native-elements';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {flushToken, getUserProfile, createStaticURL} from 'api';
@@ -79,8 +79,20 @@ const ProfileScreen = ({navigation}) => {
               style={styles.userPhoto}
             />
           </ImageBackground>
+          <View>
+          <TouchableOpacity 
+          style={{position: 'absolute', right: 0, zIndex: 1}}
+          onPress={() => navigation.navigate("Events")}>
+            <Icon 
+              raised
+              name="event"
+              color="#000"
+            />
+          </TouchableOpacity>
+          </View>
         </View>
       </View>
+      
       <View>
         <FlatList
           data={[

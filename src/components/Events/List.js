@@ -1,10 +1,25 @@
 import React, {useState} from 'react';
 import moment from "moment";
 import each from "lodash/each";
+import random from "lodash/random";
 import {Alert, Text, View, TouchableOpacity} from 'react-native';
+import { Avatar } from 'react-native-elements';
 import {Agenda} from 'react-native-calendars';
 import {fetchEvents} from "api";
 import {styles} from "components/Events/styles";
+import pet1 from "assets/images/pets/1.jpg"
+import pet2 from "assets/images/pets/2.jpg"
+import pet3 from "assets/images/pets/3.jpg"
+import pet4 from "assets/images/pets/4.jpg"
+import pet5 from "assets/images/pets/5.jpg"
+
+const pets = [
+  pet1,
+  pet2,
+  pet3,
+  pet4,
+  pet5,
+]
 
 const EventList = () => {
 
@@ -38,7 +53,15 @@ const EventList = () => {
         style={[styles.item, {height: item.height}]} 
         onPress={() => Alert.alert(item.name)}
       >
-        <Text>{item.name}</Text>
+        <View style={{flexDirection: 'row'}}>
+          <Text>{item.name}</Text>
+          <View style={{marginLeft: 'auto'}}>
+            <Avatar
+              rounded
+              source={pets[random(0, pets.length-1)]}
+            />
+          </View>
+        </View>
       </TouchableOpacity>
     );
   }

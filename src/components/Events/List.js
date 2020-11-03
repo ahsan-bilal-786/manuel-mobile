@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
+import moment from "moment";
+import each from "lodash/each";
 import {Alert, Text, View, TouchableOpacity} from 'react-native';
 import {Agenda} from 'react-native-calendars';
+import {fetchEvents} from "api";
 import {styles} from "components/Events/styles";
 
 const EventList = () => {
@@ -8,27 +11,25 @@ const EventList = () => {
   const [items, handleItems] = useState({});
 
   const loadItems = (day) => {
-      return;
-    const _items = [];
-    setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
-        if (!_items[strTime]) {
-          _items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 3 + 1);
-          for (let j = 0; j < numItems; j++) {
-            _items[strTime].push({
-              name: 'Item for ' + strTime + ' #' + j,
-              height: Math.max(50, Math.floor(Math.random() * 150))
-            });
+    const newItems = {};
+    fetchEvents(day.dateString).then(resp => {
+      if(resp.data.length > 0){
+        each(resp.data, (data) => {
+          const date = moment(data.startTime).format("YYYY-MM-DD");
+          const payload = {
+            name: data.title,
+            height: 50,
+            startDate: moment(data.startTime).format("YYYY-MM-DD"),
+            endDate: moment(data.endTime).format("YYYY-MM-DD"),
           }
-        }
+          if(!newItems[date])
+            newItems[date] = [payload];
+          else newItems[date].push(payload)
+        })
+        handleItems(newItems);
       }
-      const newItems = {};
-      Object.keys(_items).forEach(key => {newItems[key] = _items[key];});
-      handleItems(newItems);
-    }, 1000);
+    });
+    return;
   }
 
   const renderItem = (item) => {
@@ -63,7 +64,7 @@ const EventList = () => {
       <Agenda
         items={items}
         loadItemsForMonth={loadItems}
-        selected={'2017-05-16'}
+        selected={moment().format("YYYY-MM-DD")}
         renderItem={renderItem}
         renderEmptyDate={renderEmptyDate}
         rowHasChanged={rowHasChanged}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://192.168.10.2:3001';
+const baseURL = 'http://192.168.10.4:3001';
 
 const instance = axios.create({
   baseURL,
@@ -71,4 +71,19 @@ export const uploadUserPhoto = (imageUri) => {
       mimeType: 'multipart/form-data',
     },
   });
+};
+
+export const createEvent = (title, startTime, endTime, petId) => {
+  const payload = {
+    title,
+    startTime,
+    endTime,
+    petId
+  };
+  return instance.post('/events/', payload);
+};
+
+
+export const fetchEvents = (date) => {
+  return instance.get(`/events/user/${date}`);
 };

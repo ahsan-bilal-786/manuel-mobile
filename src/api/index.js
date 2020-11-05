@@ -101,3 +101,7 @@ export const editEvent = (title, startTime, endTime, petId, eventId) => {
   };
   return instance.put(`/events/${eventId}`, payload);
 }
+
+export const deleteEventById = (eventId) => {
+  return instance.delete(`/events/${eventId}`);
+}

@@ -8,7 +8,7 @@ import moment from "moment";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Picker} from "@react-native-community/picker";
 import {Input, Button, Icon, Text} from 'react-native-elements';
-import {createEvent, editEvent} from "api";
+import {createEvent, editEvent, deleteEventById} from "api";
 import {styles} from "components/Events/styles";
 
 const pets = [
@@ -30,7 +30,7 @@ const initialValues  = {
   startTime: "",
   endDate: "",
   endTime: "",
-  petId: ""
+  petId: pets[0]
 }
 
 const validationSchema = Yup.object().shape({
@@ -75,7 +75,7 @@ const TimeIcon = ({onPress, type}) => {
 }
 
 
-const Form = ({ eventData }) => {
+const Form = ({ eventData, postDelete }) => {
   
   const [timeMode,handleTimeMode] = useState(mode.closed);
   const [successNotification, handleSuccessNotification] = useState("");
@@ -141,6 +141,14 @@ const Form = ({ eventData }) => {
       });
   }, [eventData])
 
+  const handleDelete = async () => {
+    if(eventData && eventData.id){
+      const resp = await deleteEventById(eventData.id);
+      if(resp.status === 204)
+        postDelete();
+    }
+  }
+
   const {values, isSubmitting, handleSubmit, setFieldValue} = formik;
   return (
       <>
@@ -189,10 +197,19 @@ const Form = ({ eventData }) => {
         )}
         <Text style={styles.successMessage}>{successNotification}</Text>
         <Button
+          buttonStyle={styles.submitBtn}
           title="Save"
           disabled={isSubmitting}
           onPress={handleSubmit}
         />
+        {eventData && eventData.id && (
+          <Button 
+            buttonStyle={styles.deleteBtn}
+            title="Delete"
+            disabled={isSubmitting}
+            onPress={handleDelete}
+          />
+        )}
     </>
   );
 };

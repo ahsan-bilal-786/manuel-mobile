@@ -59,7 +59,7 @@ const EventScreen = ({navigation}) => {
         <List onClickEvent={fetchEvent} />
       )}
       {activeView === view.form && (
-        <Form eventData={eventData} />
+        <Form eventData={eventData} postDelete={handleLinkClick} />
       )}
     </>
   );

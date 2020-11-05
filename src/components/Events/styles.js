@@ -17,5 +17,7 @@ export const styles = StyleSheet.create({
   successMessage: {
     color: "#008800",
     fontWeight: "bold"
-  }
+  },
+  submitBtn: {marginTop: 10, marginLeft: 5, marginRight: 5},
+  deleteBtn: {marginTop: 10, backgroundColor: "#FF0000", marginLeft: 5, marginRight: 5},
 });

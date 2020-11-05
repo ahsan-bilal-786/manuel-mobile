@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import map from "lodash/map";
 import includes from "lodash/includes";
 import * as Yup from 'yup';
@@ -8,7 +8,7 @@ import moment from "moment";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Picker} from "@react-native-community/picker";
 import {Input, Button, Icon, Text} from 'react-native-elements';
-import {createEvent} from "api";
+import {createEvent, editEvent} from "api";
 import {styles} from "components/Events/styles";
 
 const pets = [
@@ -75,7 +75,7 @@ const TimeIcon = ({onPress, type}) => {
 }
 
 
-const Form = () => {
+const Form = ({ eventData }) => {
   
   const [timeMode,handleTimeMode] = useState(mode.closed);
   const [successNotification, handleSuccessNotification] = useState("");
@@ -93,15 +93,17 @@ const Form = () => {
     onSubmit: async (values, {setSubmitting, setErrors}) => {
       const { title, startDate, startTime, endDate, endTime, petId } = values;
       handleSuccessNotification("");
-      createEvent(title, formatPayloadTime(startDate, startTime), formatPayloadTime(endDate, endTime), petId).then(resp => {
-        setSubmitting(false);
-        if(resp.data.id){
-          handleSuccessNotification(successMessage);
-        }
-      }).catch(e => {
-        setSubmitting(false);
-      });
-      
+
+      let resp = null;
+      if(eventData && eventData.id){
+        resp = await editEvent(title, formatPayloadTime(startDate, startTime), formatPayloadTime(endDate, endTime), petId, eventData.id);
+      }else{
+        resp = await createEvent(title, formatPayloadTime(startDate, startTime), formatPayloadTime(endDate, endTime), petId);
+      }
+      setSubmitting(false);
+      if(resp.data.id){
+        handleSuccessNotification(successMessage);
+      }
     },
   });
   
@@ -125,6 +127,19 @@ const Form = () => {
   const getTimeValue = (value) => {
     return value ? moment(value).format("LT") : "";
   }
+
+  const getEventData = (key) => eventData && eventData[key] ? eventData[key] : initialValues[key];
+
+  useEffect(() => {
+      formik.setValues({
+        "title":  getEventData("title"),
+        "startDate": getEventData("startTime"),
+        "startTime": getEventData("startTime"),
+        "endDate": getEventData("endTime"),
+        "endTime": getEventData("endTime"),
+        "petId": getEventData("petId")
+      });
+  }, [eventData])
 
   const {values, isSubmitting, handleSubmit, setFieldValue} = formik;
   return (

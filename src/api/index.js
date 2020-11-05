@@ -87,3 +87,17 @@ export const createEvent = (title, startTime, endTime, petId) => {
 export const fetchEvents = (date) => {
   return instance.get(`/events/user/${date}`);
 };
+
+export const fetchEventById = (eventId) => {
+  return instance.get(`/events/${eventId}`);
+}
+
+export const editEvent = (title, startTime, endTime, petId, eventId) => {
+  const payload = {
+    title,
+    startTime,
+    endTime,
+    petId
+  };
+  return instance.put(`/events/${eventId}`, payload);
+}

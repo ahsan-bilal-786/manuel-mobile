@@ -3,6 +3,7 @@ import {TouchableOpacity} from 'react-native';
 import {Header, Icon} from "react-native-elements";
 import List from "components/Events/List";
 import Form from "components/Events/Form";
+import {fetchEventById} from "api";
 
 const view = {
   list: "list",
@@ -32,6 +33,17 @@ const RightComponent = ({link, icon}) => {
 
 const EventScreen = ({navigation}) => {
   const [activeView, handleActiveView] = useState(view.list);
+  const [eventData, handleEventData] = useState(null);
+  const fetchEvent = async (eventId) => {
+    handleActiveView(view.form);
+    handleEventData(null);
+    const event = await fetchEventById(eventId);
+    handleEventData(event.data);
+  }
+  const handleLinkClick = () => {
+    handleActiveView(activeView === view.form ? view.list : view.form);
+    handleEventData(null);
+  }
   return (
     <>
       <Header
@@ -39,15 +51,15 @@ const EventScreen = ({navigation}) => {
         leftComponent={<LeftComponent link={() => navigation.push("Profile")} />}
         centerComponent={{ text: 'Events', style: { color: '#fff' } }}
         rightComponent={<RightComponent 
-          link={() => handleActiveView(activeView === view.form ? view.list : view.form)} 
+          link={handleLinkClick} 
           icon={activeView === view.form ? "menu" : "add"} 
           />}
       />
       {activeView === view.list && (
-        <List />
+        <List onClickEvent={fetchEvent} />
       )}
       {activeView === view.form && (
-        <Form />
+        <Form eventData={eventData} />
       )}
     </>
   );

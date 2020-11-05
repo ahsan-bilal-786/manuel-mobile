@@ -21,7 +21,7 @@ const pets = [
   pet5,
 ]
 
-const EventList = () => {
+const EventList = ({onClickEvent}) => {
 
   const [items, handleItems] = useState({});
 
@@ -32,6 +32,7 @@ const EventList = () => {
         each(resp.data, (data) => {
           const date = moment(data.startTime).format("YYYY-MM-DD");
           const payload = {
+            eventId: data.id,
             name: data.title,
             height: 50,
             startDate: moment(data.startTime).format("YYYY-MM-DD"),
@@ -51,7 +52,7 @@ const EventList = () => {
     return (
       <TouchableOpacity
         style={[styles.item, {height: item.height}]} 
-        onPress={() => Alert.alert(item.name)}
+        onPress={() => onClickEvent(item.eventId)}
       >
         <View style={{flexDirection: 'row'}}>
           <Text>{item.name}</Text>

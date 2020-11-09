@@ -120,12 +120,11 @@ const Form = ({eventData, postDelete}) => {
   };
 
   const onChangeTimePicker = (event, selectedDate) => {
-    const mode = timeMode;
-    if (Platform.OS !== 'ios' || mode === "startDate" || mode === "endDate" ) {
+    if (Platform.OS !== 'ios' || mode === 'startDate' || mode === 'endDate') {
       handleTimeMode(mode.closed);
     }
     if (event.type === 'set') {
-      formik.setFieldValue(mode, selectedDate);
+      formik.setFieldValue(timeMode, selectedDate);
     }
   };
 

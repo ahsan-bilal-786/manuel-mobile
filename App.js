@@ -10,6 +10,7 @@ import VerifyAccountScreen from 'screens/Auth/VerifyAccount';
 import PhotoUpload from 'screens/Auth/PhotoUpload';
 import ProfileScreen from 'screens/Profile';
 import EventsScreen from 'screens/Events';
+import PetProfileScreen from 'screens/Pets';
 
 const Stack = createStackNavigator();
 
@@ -52,6 +53,11 @@ const App = () => {
             <Stack.Screen
               name="Events"
               component={EventsScreen}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="PetProfile"
+              component={PetProfileScreen}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

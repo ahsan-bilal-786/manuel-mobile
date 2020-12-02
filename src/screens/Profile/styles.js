@@ -15,10 +15,19 @@ export const styles = StyleSheet.create({
     bottom: -70,
     backgroundColor: '#FFF',
   },
-  galleryWrapper: {flex: 1, flexDirection: 'column', margin: 1},
+  petListWrapper: {marginBottom: 10},
+  galleryWrapper: {
+    flex: 1,
+    flexDirection: 'column',
+    margin: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   galleryImage: {
     width: 120,
     height: 120,
   },
   settingsIcon: {position: 'absolute', top: 20, right: 0, zIndex: 1},
+
+  petThumb: {width: 70, height: 70, borderRadius: 70},
 });

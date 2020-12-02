@@ -9,14 +9,14 @@ export const styles = StyleSheet.create({
     marginLeft: 10,
   },
   avatarWrapper: {
-    textAlign: "right",
-    justifyContent: 'center'
+    textAlign: 'right',
+    justifyContent: 'center',
   },
   petNameWrapper: {
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   userPhoto: {
-    marginLeft: "auto",
+    marginLeft: 'auto',
     width: 120,
     height: 120,
     borderRadius: 60,
@@ -24,10 +24,25 @@ export const styles = StyleSheet.create({
     borderColor: '#CCC',
     backgroundColor: '#FFF',
   },
-  petFormVal: {fontWeight: "bold"},
+  petFormVal: {fontWeight: 'bold'},
   galleryWrapper: {flex: 1, flexDirection: 'column', margin: 1},
   galleryImage: {
     width: 120,
     height: 120,
-  }
+  },
+  formContainer: {
+    height: 90,
+    marginBottom: 10,
+  },
+  inputLabel: {
+    textAlign: 'right',
+    paddingTop: 17,
+  },
+  inputField: {
+    height: 1,
+    borderBottomColor: '#FFF',
+  },
+  submitBtn: {
+    marginHorizontal: 10,
+  },
 });

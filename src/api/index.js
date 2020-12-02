@@ -78,11 +78,10 @@ export const createEvent = (title, startTime, endTime, petId) => {
     title,
     startTime,
     endTime,
-    petId
+    petId,
   };
   return instance.post('/events/', payload);
 };
-
 
 export const fetchEvents = (date) => {
   return instance.get(`/events/user/${date}`);
@@ -90,18 +89,42 @@ export const fetchEvents = (date) => {
 
 export const fetchEventById = (eventId) => {
   return instance.get(`/events/${eventId}`);
-}
+};
 
 export const editEvent = (title, startTime, endTime, petId, eventId) => {
   const payload = {
     title,
     startTime,
     endTime,
-    petId
+    petId,
   };
   return instance.put(`/events/${eventId}`, payload);
-}
+};
 
 export const deleteEventById = (eventId) => {
   return instance.delete(`/events/${eventId}`);
-}
+};
+
+export const addPetProfile = (petId, height, weight, age, race) => {
+  const payload = {
+    height,
+    weight,
+    age,
+    race,
+  };
+  return instance.post('/users/', payload);
+};
+
+export const updatePetProfile = (petId, height, weight, age, race) => {
+  const payload = {
+    height,
+    weight,
+    age,
+    race,
+  };
+  return instance.put(`/users/${petId}`, payload);
+};
+
+export const getPetProfile = (petId) => {
+  return instance.get(`/users/${petId}`);
+};

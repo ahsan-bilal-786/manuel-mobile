@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {FlatList, View, Text, Image, TouchableOpacity} from 'react-native';
-import {Header, Icon,Input } from 'react-native-elements';
+import {Header, Icon, Input} from 'react-native-elements';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { Col, Row, Grid } from "react-native-easy-grid";
-import { getUserProfile, createStaticURL} from 'api';
+import {Col, Row, Grid} from 'react-native-easy-grid';
+import {getUserProfile, createStaticURL} from 'api';
 import {styles} from 'screens/Pets/styles';
+import Form from 'components/Pets/Form';
+import Layout from 'screens/Pets/Layout';
 import avatar from '../../assets/images/dogavatar.png';
 import photo_1 from '../../assets/images/pets/1.jpg';
 import photo_3 from '../../assets/images/pets/3.jpg';
@@ -15,22 +17,6 @@ import photo_7 from '../../assets/images/pets/7.jpg';
 import photo_8 from '../../assets/images/pets/8.jpg';
 import photo_9 from '../../assets/images/pets/9.jpg';
 
-const LeftComponent = ({link}) => {
-  return (
-    <TouchableOpacity onPress={link}>
-      <Icon name="arrow-back" color="#FFFFFF" />
-    </TouchableOpacity>
-  );
-};
-
-const RightComponent = ({link, icon}) => {
-  return (
-    <TouchableOpacity onPress={link}>
-      <Icon name={icon} color="#FFFFFF" />
-    </TouchableOpacity>
-  );
-}
-
 const initalValues = {
   name: '',
   avatar: '',
@@ -39,7 +25,7 @@ const initalValues = {
 
 const ProfileScreen = ({navigation}) => {
   const [profile, setUserProfile] = useState(initalValues);
-  
+
   useEffect(() => {
     const fetchProfile = navigation.addListener('focus', () => {
       getUserProfile().then((resp) => {
@@ -57,50 +43,10 @@ const ProfileScreen = ({navigation}) => {
   };
 
   return (
-    <>
-    <Header
-        placement="left"
-        leftComponent={
-          <LeftComponent link={() => navigation.push('Profile')} />
-        }
-        centerComponent={{text: 'Pug The Thug', style: {color: '#fff'}}}
-      />
-    <SafeAreaView style={styles.wrapper}>
-      <View style={styles.profileInfo}>
-        <Grid>
-          <Col size={35} style={styles.avatarWrapper}>
-            <Image
-              source={profile.avatar ? {uri: profile.avatar} : avatar}
-              style={styles.userPhoto}
-            />
-          </Col>
-          <Col size={65} style={styles.petNameWrapper}>
-            <Text style={styles.personName}>
-              {profile.name || 'Pug The Thug'}
-            </Text>
-          </Col>
-        </Grid>
-      </View>
-
-      <Grid style={{marginHorizontal: 30}}>
-        <Row>
-          <Col size={50}>
-            <Text>Height: <Text style={styles.petFormVal}>22''</Text></Text>
-          </Col>
-          <Col size={50}>
-            <Text>Age: <Text style={styles.petFormVal}>3 years</Text></Text>
-          </Col>
-        </Row>
-        <Row>
-          <Col size={50}>
-            <Text>Weight: <Text style={styles.petFormVal}>12 Kg</Text></Text>
-          </Col>
-          <Col size={50}>
-            <Text>Race: <Text style={styles.petFormVal}>Animal</Text></Text>
-          </Col>
-        </Row>
-        </Grid>
-      
+    <Layout
+      title="Pug The Thug"
+      handleLeftClick={() => navigation.navigate('Profile')}>
+      <Form profile={profile} />
       <View>
         <FlatList
           data={[
@@ -123,8 +69,7 @@ const ProfileScreen = ({navigation}) => {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
-    </SafeAreaView>
-    </>
+    </Layout>
   );
 };
 

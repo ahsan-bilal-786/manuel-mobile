@@ -123,9 +123,11 @@ const Form = ({eventData, postDelete}) => {
     if (Platform.OS !== 'ios' || mode === 'startDate' || mode === 'endDate') {
       handleTimeMode(mode.closed);
     }
-    if (event.type === 'set') {
-      formik.setFieldValue(timeMode, selectedDate);
-    }
+    formik.setFieldValue(timeMode, selectedDate);
+
+    // if (event.type === 'set') {
+
+    // }
   };
 
   const getDateValue = (value) => {
@@ -209,16 +211,25 @@ const Form = ({eventData, postDelete}) => {
         ))}
       </Picker>
       {timeMode && (
-        <DateTimePicker
-          key={timeMode}
-          value={new Date()}
-          mode={
-            includes([mode.startDate, mode.endDate], timeMode) ? 'date' : 'time'
-          }
-          is24Hour={false}
-          display="default"
-          onChange={onChangeTimePicker}
-        />
+        <>
+          {Platform.OS === 'ios' && (
+            <TouchableOpacity onPress={() => handleTimeMode(mode.closed)}>
+              <Text>Done</Text>
+            </TouchableOpacity>
+          )}
+          <DateTimePicker
+            key={timeMode}
+            value={new Date()}
+            mode={
+              includes([mode.startDate, mode.endDate], timeMode)
+                ? 'date'
+                : 'time'
+            }
+            is24Hour={false}
+            display="default"
+            onChange={onChangeTimePicker}
+          />
+        </>
       )}
       <Text style={styles.successMessage}>{successNotification}</Text>
       <Button

@@ -105,13 +105,13 @@ export const deleteEventById = (eventId) => {
   return instance.delete(`/events/${eventId}`);
 };
 
-export const addPetProfile = (petName, height, weight, dob, race) => {
+export const addPetProfile = (petName, height, weight, dob, petType) => {
   const payload = {
     name: petName,
     height,
     weight,
     dob,
-    race,
+    petType,
   };
   return instance.post('/pets/', payload);
 };

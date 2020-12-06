@@ -24,15 +24,7 @@ import photo_7 from '../../assets/images/photo_7.jpg';
 import photo_8 from '../../assets/images/photo_8.jpg';
 import photo_9 from '../../assets/images/photo_9.jpg';
 import photo_10 from '../../assets/images/photo_10.jpg';
-
-import pet_photo_1 from '../../assets/images/pets/1.jpg';
-import pet_photo_3 from '../../assets/images/pets/3.jpg';
-import pet_photo_4 from '../../assets/images/pets/4.jpg';
-import pet_photo_5 from '../../assets/images/pets/5.jpg';
-import pet_photo_6 from '../../assets/images/pets/6.jpg';
-import pet_photo_7 from '../../assets/images/pets/7.jpg';
-import pet_photo_8 from '../../assets/images/pets/8.jpg';
-import pet_photo_9 from '../../assets/images/pets/9.jpg';
+import petAvatar from '../../assets/images/dogavatar.png';
 
 const samplePhotos = [
   photo_1,
@@ -46,16 +38,6 @@ const samplePhotos = [
   photo_10,
 ];
 
-const petSamplePhotos = [
-  pet_photo_1,
-  pet_photo_3,
-  pet_photo_4,
-  pet_photo_5,
-  pet_photo_6,
-  pet_photo_7,
-  pet_photo_8,
-];
-
 const initalValues = {
   name: '',
   avatar: '',
@@ -63,6 +45,7 @@ const initalValues = {
 };
 const ProfileScreen = ({navigation}) => {
   const [profile, setUserProfile] = useState(initalValues);
+  const [pets, setPetsProfile] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
   const list = [
     {
@@ -93,10 +76,15 @@ const ProfileScreen = ({navigation}) => {
 
   useEffect(() => {
     const fetchProfile = navigation.addListener('focus', () => {
-      getUserProfile().then((resp) => {
-        const {name, avatar, email} = resp.data;
-        setUserProfile({name, avatar: createStaticURL(avatar), email});
-      });
+      getUserProfile()
+        .then((resp) => {
+          const {name, avatar, email, pets} = resp.data;
+          setUserProfile({name, avatar: createStaticURL(avatar), email});
+          setPetsProfile(pets);
+        })
+        .catch((e) => {
+          console.log(JSON.stringify(e));
+        });
     });
     // Return the function to fetchProfile from the event so it gets removed on unmount
     return fetchProfile;
@@ -130,16 +118,19 @@ const ProfileScreen = ({navigation}) => {
 
       <View style={styles.petListWrapper}>
         <FlatList
-          data={[...petSamplePhotos, 'addBtn']}
+          data={[...pets, 'addBtn']}
           renderItem={({item, index}) => (
             <>
-              {index < petSamplePhotos.length ? (
+              {index < pets.length ? (
                 <View style={styles.galleryWrapper}>
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate('PetProfile', {petId: index})
+                      navigation.navigate('PetProfile', {petId: item.id})
                     }>
-                    <Image style={styles.petThumb} source={item} />
+                    <Image
+                      style={styles.petThumb}
+                      source={item.avatar || petAvatar}
+                    />
                   </TouchableOpacity>
                 </View>
               ) : (

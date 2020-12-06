@@ -1,13 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {FlatList, View, Text, Image, TouchableOpacity} from 'react-native';
-import {Header, Icon, Input} from 'react-native-elements';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Col, Row, Grid} from 'react-native-easy-grid';
-import {getUserProfile, createStaticURL} from 'api';
+import {FlatList, View, Text, Image} from 'react-native';
+import {useFormik} from 'formik';
+import * as Yup from 'yup';
+import map from 'lodash/map';
+import {updatePetProfile, getPetProfile} from 'api';
 import {styles} from 'screens/Pets/styles';
 import Form from 'components/Pets/Form';
 import Layout from 'screens/Pets/Layout';
-import avatar from '../../assets/images/dogavatar.png';
 import photo_1 from '../../assets/images/pets/1.jpg';
 import photo_3 from '../../assets/images/pets/3.jpg';
 import photo_4 from '../../assets/images/pets/4.jpg';
@@ -17,36 +16,99 @@ import photo_7 from '../../assets/images/pets/7.jpg';
 import photo_8 from '../../assets/images/pets/8.jpg';
 import photo_9 from '../../assets/images/pets/9.jpg';
 
-const initalValues = {
-  name: '',
+const initialValues = {
   avatar: '',
-  email: '',
+  petName: '',
+  height: '',
+  age: '',
+  weight: '',
+  race: '',
 };
 
-const ProfileScreen = ({navigation}) => {
-  const [profile, setUserProfile] = useState(initalValues);
+const validationSchema = Yup.object().shape({
+  // avatar: Yup.string().required('Please upload avatar.'),
+  petName: Yup.string().required('Please enter Name.'),
+  height: Yup.number()
+    .typeError('Height should be a number.')
+    .required('Please enter height.'),
+  dob: Yup.string().required('Please enter DOB.'),
+  weight: Yup.number()
+    .typeError('Weight should be a number.')
+    .required('Please enter Weight.'),
+  petType: Yup.string().required('Please enter Race.'),
+});
+
+const ProfileScreen = ({navigation, route}) => {
+  const [hasSubmitted, handleSubmitted] = useState(false);
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values, {setSubmitting, setErrors}) => {
+      const {id, petName, height, weight, dob, petType} = values;
+      updatePetProfile(id, petName, height, weight, dob, petType)
+        .then((resp) => {
+          fetchPetProfile();
+        })
+        .catch((e) => {
+          console.log('Error', e);
+        });
+    },
+  });
+
+  const fetchPetProfile = () => {
+    getPetProfile(route.params.petId)
+      .then((resp) => {
+        const {id, avatar, dob, height, name, petType, weight} = resp.data;
+        const payload = {
+          id,
+          avatar,
+          dob,
+          height,
+          petType,
+          weight,
+          petName: name,
+        };
+        formik.setValues({
+          ...payload,
+        });
+      })
+      .catch((e) => {
+        console.log('Error:::', e);
+      });
+  };
 
   useEffect(() => {
     const fetchProfile = navigation.addListener('focus', () => {
-      getUserProfile().then((resp) => {
-        const {name, avatar, email} = resp.data;
-        setUserProfile({name, avatar: createStaticURL(avatar), email});
-      });
+      fetchPetProfile();
     });
     // Return the function to fetchProfile from the event so it gets removed on unmount
     return fetchProfile;
   }, [navigation]);
 
-  const handleLinkClick = () => {
-    handleActiveView(activeView === view.form ? view.list : view.form);
-    handleEventData(null);
+  const handleSubmit = () => {
+    formik.handleSubmit();
+    handleSubmitted(true);
+  };
+  const handleChange = (fieldId, value) => {
+    formik.setFieldValue(fieldId, value);
+    handleSubmit();
   };
 
   return (
     <Layout
-      title="Pug The Thug"
+      title={formik.values.petName}
       handleLeftClick={() => navigation.navigate('Profile')}>
-      <Form profile={profile} />
+      <Form values={formik.values} onChange={handleChange} />
+      {hasSubmitted && (
+        <View style={{marginHorizontal: 15, marginBottom: 6}}>
+          {map(formik.errors, (error, i) => (
+            <Text key={i} style={styles.error}>
+              {error}
+            </Text>
+          ))}
+        </View>
+      )}
       <View>
         <FlatList
           data={[

@@ -105,26 +105,35 @@ export const deleteEventById = (eventId) => {
   return instance.delete(`/events/${eventId}`);
 };
 
-export const addPetProfile = (petId, height, weight, age, race) => {
+export const addPetProfile = (petName, height, weight, dob, race) => {
   const payload = {
+    name: petName,
     height,
     weight,
-    age,
+    dob,
     race,
   };
-  return instance.post('/users/', payload);
+  return instance.post('/pets/', payload);
 };
 
-export const updatePetProfile = (petId, height, weight, age, race) => {
+export const updatePetProfile = (
+  petId,
+  petName,
+  height,
+  weight,
+  dob,
+  petType,
+) => {
   const payload = {
+    name: petName,
     height,
     weight,
-    age,
-    race,
+    dob,
+    petType,
   };
-  return instance.put(`/users/${petId}`, payload);
+  return instance.put(`/pets/${petId}`, payload);
 };
 
 export const getPetProfile = (petId) => {
-  return instance.get(`/users/${petId}`);
+  return instance.get(`/pets/${petId}`);
 };

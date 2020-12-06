@@ -3,7 +3,17 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   wrapper: {flex: 1},
   profileInfo: {height: 130, marginBottom: 5},
+  error: {
+    color: '#F00',
+    textAlign: 'center',
+  },
   personName: {
+    fontWeight: 'bold',
+    fontSize: 24,
+    marginLeft: 10,
+  },
+  petNameContainer: {borderBottomColor: '#FFF'},
+  petName: {
     fontWeight: 'bold',
     fontSize: 24,
     marginLeft: 10,

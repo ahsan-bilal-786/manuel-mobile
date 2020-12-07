@@ -38,8 +38,8 @@ const AddPetScreen = ({navigation}) => {
     initialValues,
     validationSchema,
     onSubmit: async (values, {setSubmitting, setErrors}) => {
-      const {petName, height, weight, dob, petType} = values;
-      addPetProfile(petName, height, weight, dob, petType)
+      const {avatar, petName, height, weight, dob, petType} = values;
+      addPetProfile(avatar, petName, height, weight, dob, petType)
         .then((resp) => {
           navigation.navigate('Profile');
         })

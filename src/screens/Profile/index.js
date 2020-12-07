@@ -8,10 +8,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {BottomSheet, ListItem, Icon} from 'react-native-elements';
-import {Col, Row, Grid} from 'react-native-easy-grid';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {flushToken, getUserProfile, createStaticURL} from 'api';
+import {
+  flushToken,
+  getUserProfile,
+  uploadUserPhoto,
+  createStaticURL,
+} from 'api';
 import {deleteUserToken} from 'utils/asyncStorage';
+import ProfilePhoto from 'components/Photo/Profile';
 import {styles} from 'screens/Profile/styles';
 import cover from '../../assets/images/cover.jpg';
 import avatar from '../../assets/images/avatar.png';
@@ -101,14 +106,30 @@ const ProfileScreen = ({navigation}) => {
         </Text>
         <View style={styles.coverArea}>
           <ImageBackground source={cover} style={styles.coverImage}>
-            <Image
-              source={profile.avatar ? {uri: profile.avatar} : avatar}
-              style={styles.userPhoto}
-            />
+            <View style={styles.userPhotoContainer}>
+              <ProfilePhoto
+                src={profile.avatar}
+                placeholder={avatar}
+                callback={uploadUserPhoto}
+              />
+              {/* <Image
+                source={profile.avatar ? {uri: profile.avatar} : avatar}
+                style={styles.userPhoto}
+              />
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                }}
+                onPress={() => navigation.navigate('PhotoUpload')}>
+                <Icon raised name="edit" color="#000" size={15} />
+              </TouchableOpacity> */}
+            </View>
           </ImageBackground>
           <View>
             <TouchableOpacity
-              style={{position: 'absolute', right: 0, zIndex: 1}}
+              style={styles.eventsIcon}
               onPress={() => navigation.navigate('Events')}>
               <Icon raised name="event" color="#000" />
             </TouchableOpacity>
@@ -129,8 +150,13 @@ const ProfileScreen = ({navigation}) => {
                     }>
                     <Image
                       style={styles.petThumb}
-                      source={item.avatar || petAvatar}
+                      source={
+                        item.avatar
+                          ? {uri: createStaticURL(item.avatar)}
+                          : petAvatar
+                      }
                     />
+                    <Text style={styles.alignCenter}>{item.name}</Text>
                   </TouchableOpacity>
                 </View>
               ) : (

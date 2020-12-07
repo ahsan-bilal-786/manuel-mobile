@@ -8,6 +8,7 @@ import {Picker} from '@react-native-community/picker';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import {Input, Icon} from 'react-native-elements';
 import {Col, Row, Grid} from 'react-native-easy-grid';
+import ProfilePhoto from 'components/Photo/Profile';
 import {styles} from 'screens/Pets/styles';
 import avatar from '../../assets/images/dogavatar.png';
 
@@ -47,9 +48,10 @@ const Form = ({values, onChange}) => {
       <View style={styles.profileInfo}>
         <Grid>
           <Col size={35} style={styles.avatarWrapper}>
-            <Image
-              source={values.avatar ? {uri: values.avatar} : avatar}
-              style={styles.userPhoto}
+            <ProfilePhoto
+              src={values.avatar}
+              placeholder={avatar}
+              callback={(imageUri) => onChange('avatar', imageUri)}
             />
           </Col>
           <Col size={65} style={styles.petNameWrapper}>
@@ -76,10 +78,10 @@ const Form = ({values, onChange}) => {
                 onChangeText={(value) => onChange('height', value)}
               />
             </Col>
-            <Col size={15}>
+            <Col size={10}>
               <Text style={styles.inputLabel}>Age:</Text>
             </Col>
-            <Col size={25}>
+            <Col size={30}>
               <Input
                 disabled={true}
                 onChangeText={(value) => onChange('dob', value)}
@@ -118,10 +120,10 @@ const Form = ({values, onChange}) => {
                 onChangeText={(value) => onChange('weight', value)}
               />
             </Col>
-            <Col size={15}>
+            <Col size={10}>
               <Text style={styles.inputLabel}>Race:</Text>
             </Col>
-            <Col size={25}>
+            <Col size={30}>
               <Picker
                 selectedValue={getVal('petType')}
                 onValueChange={(itemValue, itemIndex) => {

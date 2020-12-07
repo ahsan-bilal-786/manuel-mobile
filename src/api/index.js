@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 
 const baseURL = 'http://192.168.10.5:3001';
 
@@ -105,15 +106,34 @@ export const deleteEventById = (eventId) => {
   return instance.delete(`/events/${eventId}`);
 };
 
-export const addPetProfile = (petName, height, weight, dob, petType) => {
-  const payload = {
-    name: petName,
-    height,
-    weight,
-    dob,
-    petType,
-  };
-  return instance.post('/pets/', payload);
+export const addPetProfile = (
+  avatar,
+  petName,
+  height,
+  weight,
+  dob,
+  petType,
+) => {
+  const payload = new FormData();
+  payload.append('name', petName);
+  payload.append('height', height);
+  payload.append('weight', weight);
+  payload.append('dob', moment(dob).format('YYYY-MM-DD HH:mm:ss'));
+  payload.append('petType', petType);
+
+  if (avatar) {
+    payload.append('avatar', {
+      uri: Platform.OS === 'android' ? avatar : avatar.replace('file://', ''),
+      name: 'profile.jpg',
+      type: 'image/jpeg',
+    });
+  }
+  return instance.post('/pets/', payload, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      mimeType: 'multipart/form-data',
+    },
+  });
 };
 
 export const updatePetProfile = (
@@ -123,15 +143,29 @@ export const updatePetProfile = (
   weight,
   dob,
   petType,
+  avatar,
 ) => {
-  const payload = {
-    name: petName,
-    height,
-    weight,
-    dob,
-    petType,
-  };
-  return instance.put(`/pets/${petId}`, payload);
+  const payload = new FormData();
+  payload.append('name', petName);
+  payload.append('height', height);
+  payload.append('weight', weight);
+  payload.append('dob', dob);
+  payload.append('petType', petType);
+
+  if (avatar) {
+    payload.append('avatar', {
+      uri: Platform.OS === 'android' ? avatar : avatar.replace('file://', ''),
+      name: 'profile.jpg',
+      type: 'image/jpeg',
+    });
+  }
+  console.log('updatePetProfile{aylpoad:::', payload);
+  return instance.put(`/pets/${petId}`, payload, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      mimeType: 'multipart/form-data',
+    },
+  });
 };
 
 export const getPetProfile = (petId) => {

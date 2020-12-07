@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
   avatarWrapper: {
     textAlign: 'right',
     justifyContent: 'center',
+    marginLeft: 15,
   },
   petNameWrapper: {
     justifyContent: 'center',

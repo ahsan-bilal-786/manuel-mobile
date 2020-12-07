@@ -3,7 +3,7 @@ import {FlatList, View, Text, Image} from 'react-native';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import map from 'lodash/map';
-import {updatePetProfile, getPetProfile} from 'api';
+import {updatePetProfile, getPetProfile, createStaticURL} from 'api';
 import {styles} from 'screens/Pets/styles';
 import Form from 'components/Pets/Form';
 import Layout from 'screens/Pets/Layout';
@@ -45,8 +45,16 @@ const ProfileScreen = ({navigation, route}) => {
     initialValues,
     validationSchema,
     onSubmit: async (values, {setSubmitting, setErrors}) => {
-      const {id, petName, height, weight, dob, petType} = values;
-      updatePetProfile(id, petName, height, weight, dob, petType)
+      const {petName, height, weight, dob, petType} = values;
+      updatePetProfile(
+        route.params.petId,
+        petName,
+        height,
+        weight,
+        dob,
+        petType,
+        '',
+      )
         .then((resp) => {
           fetchPetProfile();
         })
@@ -62,7 +70,7 @@ const ProfileScreen = ({navigation, route}) => {
         const {id, avatar, dob, height, name, petType, weight} = resp.data;
         const payload = {
           id,
-          avatar,
+          avatar: avatar ? createStaticURL(avatar) : '',
           dob,
           height,
           petType,
@@ -91,8 +99,31 @@ const ProfileScreen = ({navigation, route}) => {
     handleSubmitted(true);
   };
   const handleChange = (fieldId, value) => {
+    if (fieldId === 'avatar') {
+      handleChangeAvatar(value);
+      return;
+    }
     formik.setFieldValue(fieldId, value);
     handleSubmit();
+  };
+
+  const handleChangeAvatar = (value) => {
+    const {petName, height, weight, dob, petType} = formik.values;
+    updatePetProfile(
+      route.params.petId,
+      petName,
+      height,
+      weight,
+      dob,
+      petType,
+      value,
+    )
+      .then((resp) => {
+        fetchPetProfile();
+      })
+      .catch((e) => {
+        console.log('Error', e);
+      });
   };
 
   return (

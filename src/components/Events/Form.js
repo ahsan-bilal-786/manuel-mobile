@@ -8,19 +8,8 @@ import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Picker} from '@react-native-community/picker';
 import {Input, Button, Icon, Text} from 'react-native-elements';
-import {createEvent, editEvent, deleteEventById} from 'api';
+import {createEvent, editEvent, deleteEventById, getUserPetsList} from 'api';
 import {styles} from 'components/Events/styles';
-
-const pets = [
-  'Bella',
-  'Charlie',
-  'Luna',
-  'Lucy',
-  'Max',
-  'Bailey',
-  'Cooper',
-  'Daisy',
-];
 
 const successMessage = 'The Event has been successfully saved.';
 
@@ -30,7 +19,7 @@ const initialValues = {
   startTime: '',
   endDate: '',
   endTime: '',
-  petId: pets[0],
+  petId: null,
 };
 
 const validationSchema = Yup.object().shape({
@@ -75,6 +64,7 @@ const TimeIcon = ({onPress, type}) => {
 const Form = ({eventData, postDelete}) => {
   const [timeMode, handleTimeMode] = useState(mode.closed);
   const [successNotification, handleSuccessNotification] = useState('');
+  const [petsList, handlePetsList] = useState([]);
 
   const formatPayloadTime = (date, time) => {
     date = moment(date).format('YYYY-MM-DD');
@@ -152,6 +142,12 @@ const Form = ({eventData, postDelete}) => {
     });
   }, [eventData]);
 
+  useEffect(() => {
+    getUserPetsList().then((resp) => {
+      handlePetsList(resp.data);
+    });
+  }, []);
+
   const handleDelete = async () => {
     if (eventData && eventData.id) {
       const resp = await deleteEventById(eventData.id);
@@ -206,8 +202,8 @@ const Form = ({eventData, postDelete}) => {
         onValueChange={(itemValue, itemIndex) =>
           setFieldValue('petId', itemValue)
         }>
-        {map(pets, (pet) => (
-          <Picker.Item key={pet} label={pet} value={pet} />
+        {map(petsList, ({id, name}) => (
+          <Picker.Item key={id} label={name} value={id} />
         ))}
       </Picker>
       {timeMode && (

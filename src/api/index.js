@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-const baseURL = 'http://192.168.10.5:3001';
+const baseURL = 'http://192.168.10.2:3001';
 
 const instance = axios.create({
   baseURL,
@@ -170,4 +170,8 @@ export const updatePetProfile = (
 
 export const getPetProfile = (petId) => {
   return instance.get(`/pets/${petId}`);
+};
+
+export const getUserPetsList = () => {
+  return instance.get('/pets/');
 };

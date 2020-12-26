@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {View} from 'react-native';
 import moment from 'moment';
 import {Text, Image, Button, Icon, Input} from 'react-native-elements';
+import {createStaticURL} from 'api';
+
 import {styles} from 'components/PostView/styles';
 
 const PostView = ({
@@ -21,10 +23,19 @@ const PostView = ({
           color="#CCC"
           containerStyle={styles.icon}
         />
-        <Text style={styles.dateText}>{moment().format('ll')}</Text>
+        <Text style={styles.dateText}>
+          {date ? moment(date).format('ll') : moment().format('ll')}
+        </Text>
       </View>
+      {id ? (
+        <Image
+          source={{uri: createStaticURL(photo)}}
+          style={styles.thumbnail}
+        />
+      ) : (
+        <Image source={{uri: photo}} style={styles.thumbnail} />
+      )}
 
-      <Image source={{uri: photo}} style={styles.thumbnail} />
       <View>
         <Input
           placeholder="Description"

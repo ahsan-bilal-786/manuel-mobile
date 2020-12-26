@@ -17,6 +17,7 @@ import {
   uploadUserPhoto,
   createStaticURL,
   createUserPost,
+  updateUserPost,
   getUserPosts,
 } from 'api';
 import {deleteUserToken} from 'utils/asyncStorage';
@@ -132,12 +133,30 @@ const ProfileScreen = ({navigation}) => {
     });
 
   const savePost = async () => {
-    const {photo, description} = post;
-    const resp = await createUserPost(photo, description);
-    if (resp.status === 201) {
-      closePostModal();
-      fetchPosts();
+    const {id, photo, description} = post;
+    if (id) {
+      const updateResp = await updateUserPost(id, description);
+      if (updateResp.status === 200) {
+        closePostModal();
+        fetchPosts();
+      }
+    } else {
+      const createResp = await createUserPost(photo, description);
+      if (createResp.status === 201) {
+        closePostModal();
+        fetchPosts();
+      }
     }
+  };
+
+  const openPost = (item) => {
+    const {avatar, createdAt, description, id} = item;
+    handlePost({
+      id,
+      description,
+      date: createdAt,
+      photo: avatar,
+    });
   };
 
   return (
@@ -169,9 +188,11 @@ const ProfileScreen = ({navigation}) => {
             </View>
           </View>
         </View>
-        <ScrollView>
+
+        <ScrollView style={{flexGrow: 1}} scrollEnabled={true}>
           <View style={styles.petListWrapper}>
             <FlatList
+              scrollEnabled={false}
               data={[...pets, 'addBtn']}
               renderItem={({item, index}) => (
                 <>
@@ -212,48 +233,49 @@ const ProfileScreen = ({navigation}) => {
               <Icon name="add" color="#FFF" />
             </TouchableOpacity>
           </View>
-          {post.photo !== '' && (
-            <>
-              <Modal handleClose={closePostModal}>
-                <PostView
-                  {...post}
-                  handleSubmit={savePost}
-                  handleChangeDescription={handleChangeDescription}
-                />
-              </Modal>
-            </>
-          )}
 
           <View>
             <FlatList
+              scrollEnabled={false}
               data={userPosts}
               renderItem={({item}) => (
                 <View style={styles.galleryWrapper}>
-                  <Image
-                    style={styles.galleryImage}
-                    source={{uri: createStaticURL(item.avatar)}}
-                  />
+                  <TouchableOpacity onPress={() => openPost(item)}>
+                    <Image
+                      style={styles.galleryImage}
+                      source={{uri: createStaticURL(item.avatar)}}
+                    />
+                  </TouchableOpacity>
                 </View>
               )}
               numColumns={3}
               keyExtractor={(item, index) => index.toString()}
             />
           </View>
-          <BottomSheet isVisible={isVisible}>
-            {list.map((l, i) => (
-              <ListItem
-                key={i}
-                containerStyle={l.containerStyle}
-                onPress={l.onPress}>
-                <ListItem.Content>
-                  <ListItem.Title style={l.titleStyle}>
-                    {l.title}
-                  </ListItem.Title>
-                </ListItem.Content>
-              </ListItem>
-            ))}
-          </BottomSheet>
         </ScrollView>
+
+        <BottomSheet isVisible={isVisible}>
+          {list.map((l, i) => (
+            <ListItem
+              key={i}
+              containerStyle={l.containerStyle}
+              onPress={l.onPress}>
+              <ListItem.Content>
+                <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
+              </ListItem.Content>
+            </ListItem>
+          ))}
+        </BottomSheet>
+
+        {post.photo !== '' && (
+          <Modal handleClose={closePostModal}>
+            <PostView
+              {...post}
+              handleSubmit={savePost}
+              handleChangeDescription={handleChangeDescription}
+            />
+          </Modal>
+        )}
       </SafeAreaView>
     </>
   );

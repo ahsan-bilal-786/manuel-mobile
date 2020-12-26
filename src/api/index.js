@@ -198,3 +198,8 @@ export const createUserPost = (avatar, description) => {
     },
   });
 };
+
+export const updateUserPost = (id, description) => {
+  const payload = {description};
+  return instance.put(`/posts/${id}`, payload);
+};

@@ -13,7 +13,6 @@ const EventList = ({onClickEvent}) => {
   const loadItems = (day) => {
     const newItems = {};
     fetchEvents(day.dateString).then((resp) => {
-      console.log(resp.data);
       if (resp.data.length > 0) {
         each(resp.data, (data) => {
           const date = moment(data.startTime).format('YYYY-MM-DD');

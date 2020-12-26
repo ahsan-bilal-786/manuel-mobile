@@ -7,7 +7,7 @@ import {fetchEventById} from 'api';
 
 const view = {
   list: 'list',
-  form: 'form'
+  form: 'form',
 };
 const LeftComponent = ({link}) => {
   return (
@@ -23,8 +23,7 @@ const RightComponent = ({link, icon}) => {
       <Icon name={icon} color="#FFFFFF" />
     </TouchableOpacity>
   );
-}
-
+};
 
 const EventScreen = ({navigation}) => {
   const [activeView, handleActiveView] = useState(view.list);

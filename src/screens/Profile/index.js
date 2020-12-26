@@ -26,15 +26,6 @@ import Modal from 'components/Modals';
 import {styles} from 'screens/Profile/styles';
 import cover from '../../assets/images/cover.jpg';
 import avatar from '../../assets/images/avatar.png';
-import photo_1 from '../../assets/images/photo_1.jpg';
-import photo_3 from '../../assets/images/photo_3.jpg';
-import photo_4 from '../../assets/images/photo_4.jpg';
-import photo_5 from '../../assets/images/photo_5.jpg';
-import photo_6 from '../../assets/images/photo_6.jpg';
-import photo_7 from '../../assets/images/photo_7.jpg';
-import photo_8 from '../../assets/images/photo_8.jpg';
-import photo_9 from '../../assets/images/photo_9.jpg';
-import photo_10 from '../../assets/images/photo_10.jpg';
 import petAvatar from '../../assets/images/dogavatar.png';
 
 const initalValues = {

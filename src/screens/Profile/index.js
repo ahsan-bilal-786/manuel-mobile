@@ -6,17 +6,23 @@ import {
   ImageBackground,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {BottomSheet, ListItem, Icon} from 'react-native-elements';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import ImagePicker from 'react-native-image-picker';
 import {
   flushToken,
   getUserProfile,
   uploadUserPhoto,
   createStaticURL,
+  createUserPost,
+  getUserPosts,
 } from 'api';
 import {deleteUserToken} from 'utils/asyncStorage';
 import ProfilePhoto from 'components/Photo/Profile';
+import PostView from 'components/PostView';
+import Modal from 'components/Modals';
 import {styles} from 'screens/Profile/styles';
 import cover from '../../assets/images/cover.jpg';
 import avatar from '../../assets/images/avatar.png';
@@ -31,27 +37,25 @@ import photo_9 from '../../assets/images/photo_9.jpg';
 import photo_10 from '../../assets/images/photo_10.jpg';
 import petAvatar from '../../assets/images/dogavatar.png';
 
-const samplePhotos = [
-  photo_1,
-  photo_3,
-  photo_4,
-  photo_5,
-  photo_9,
-  photo_6,
-  photo_7,
-  photo_8,
-  photo_10,
-];
-
 const initalValues = {
   name: '',
   avatar: '',
   email: '',
 };
+
+const initPostValues = {
+  id: '',
+  date: '',
+  photo: '',
+  description: '',
+};
+
 const ProfileScreen = ({navigation}) => {
   const [profile, setUserProfile] = useState(initalValues);
   const [pets, setPetsProfile] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
+  const [post, handlePost] = useState(initPostValues);
+  const [userPosts, handleUserPosts] = useState([]);
   const list = [
     {
       title: 'Back to Profile',
@@ -79,8 +83,43 @@ const ProfileScreen = ({navigation}) => {
     },
   ];
 
+  const addPost = () => {
+    let options = {
+      title: 'Select Image',
+      customButtons: [],
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+        privateDirectory: true,
+      },
+    };
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        handlePost({
+          ...initPostValues,
+          photo: response.uri,
+        });
+      }
+    });
+  };
+  const closePostModal = () => {
+    handlePost({
+      ...initPostValues,
+    });
+  };
+
+  const fetchPosts = async () => {
+    const posts = await getUserPosts();
+    handleUserPosts(posts.data);
+  };
+
   useEffect(() => {
     const fetchProfile = navigation.addListener('focus', () => {
+      fetchPosts();
       getUserProfile()
         .then((resp) => {
           const {name, avatar, email, pets} = resp.data;
@@ -95,110 +134,137 @@ const ProfileScreen = ({navigation}) => {
     return fetchProfile;
   }, [navigation]);
 
+  const handleChangeDescription = (value) =>
+    handlePost({
+      ...post,
+      description: value,
+    });
+
+  const savePost = async () => {
+    const {photo, description} = post;
+    const resp = await createUserPost(photo, description);
+    if (resp.status === 201) {
+      closePostModal();
+      fetchPosts();
+    }
+  };
+
   return (
-    <SafeAreaView style={styles.wrapper}>
-      <View>
-        <Text style={styles.personName}>{profile.name || ''}</Text>
-        <Text
-          style={{position: 'absolute', top: 20, right: 0, zIndex: 1}}
-          onPress={() => setIsVisible(true)}>
-          <Icon raised name="cog" type="font-awesome" color="#f50" />
-        </Text>
-        <View style={styles.coverArea}>
-          <ImageBackground source={cover} style={styles.coverImage}>
-            <View style={styles.userPhotoContainer}>
-              <ProfilePhoto
-                src={profile.avatar}
-                placeholder={avatar}
-                callback={uploadUserPhoto}
-              />
-              {/* <Image
-                source={profile.avatar ? {uri: profile.avatar} : avatar}
-                style={styles.userPhoto}
-              />
+    <>
+      <SafeAreaView style={styles.wrapper}>
+        <View>
+          <Text style={styles.personName}>{profile.name || ''}</Text>
+          <Text
+            style={{position: 'absolute', top: 20, right: 0, zIndex: 1}}
+            onPress={() => setIsVisible(true)}>
+            <Icon raised name="cog" type="font-awesome" color="#f50" />
+          </Text>
+          <View style={styles.coverArea}>
+            <ImageBackground source={cover} style={styles.coverImage}>
+              <View style={styles.userPhotoContainer}>
+                <ProfilePhoto
+                  src={profile.avatar}
+                  placeholder={avatar}
+                  callback={uploadUserPhoto}
+                />
+              </View>
+            </ImageBackground>
+            <View>
               <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                }}
-                onPress={() => navigation.navigate('PhotoUpload')}>
-                <Icon raised name="edit" color="#000" size={15} />
-              </TouchableOpacity> */}
+                style={styles.eventsIcon}
+                onPress={() => navigation.navigate('Events')}>
+                <Icon raised name="event" color="#000" />
+              </TouchableOpacity>
             </View>
-          </ImageBackground>
-          <View>
-            <TouchableOpacity
-              style={styles.eventsIcon}
-              onPress={() => navigation.navigate('Events')}>
-              <Icon raised name="event" color="#000" />
-            </TouchableOpacity>
           </View>
         </View>
-      </View>
-
-      <View style={styles.petListWrapper}>
-        <FlatList
-          data={[...pets, 'addBtn']}
-          renderItem={({item, index}) => (
-            <>
-              {index < pets.length ? (
-                <View style={styles.galleryWrapper}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('PetProfile', {petId: item.id})
-                    }>
-                    <Image
-                      style={styles.petThumb}
-                      source={
-                        item.avatar
-                          ? {uri: createStaticURL(item.avatar)}
-                          : petAvatar
-                      }
-                    />
-                    <Text style={styles.alignCenter}>{item.name}</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <View style={styles.galleryWrapper}>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('AddPetProfile')}>
-                    <Icon raised name="add" color="#000" />
-                  </TouchableOpacity>
-                </View>
+        <ScrollView>
+          <View style={styles.petListWrapper}>
+            <FlatList
+              data={[...pets, 'addBtn']}
+              renderItem={({item, index}) => (
+                <>
+                  {index < pets.length ? (
+                    <View style={styles.galleryWrapper}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('PetProfile', {petId: item.id})
+                        }>
+                        <Image
+                          style={styles.petThumb}
+                          source={
+                            item.avatar
+                              ? {uri: createStaticURL(item.avatar)}
+                              : petAvatar
+                          }
+                        />
+                        <Text style={styles.alignCenter}>{item.name}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <View style={styles.galleryWrapper}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate('AddPetProfile')}>
+                        <Icon raised name="add" color="#000" />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </>
               )}
+              numColumns={4}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+          <View style={styles.addPostRow}>
+            <Text style={styles.postTitle}>Posts</Text>
+            <TouchableOpacity style={styles.addPost} onPress={addPost}>
+              <Icon name="add" color="#FFF" />
+            </TouchableOpacity>
+          </View>
+          {post.photo !== '' && (
+            <>
+              <Modal handleClose={closePostModal}>
+                <PostView
+                  {...post}
+                  handleSubmit={savePost}
+                  handleChangeDescription={handleChangeDescription}
+                />
+              </Modal>
             </>
           )}
-          numColumns={4}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
 
-      <View>
-        <FlatList
-          data={samplePhotos}
-          renderItem={({item}) => (
-            <View style={styles.galleryWrapper}>
-              <Image style={styles.galleryImage} source={item} />
-            </View>
-          )}
-          numColumns={3}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-      <BottomSheet isVisible={isVisible}>
-        {list.map((l, i) => (
-          <ListItem
-            key={i}
-            containerStyle={l.containerStyle}
-            onPress={l.onPress}>
-            <ListItem.Content>
-              <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
-        ))}
-      </BottomSheet>
-    </SafeAreaView>
+          <View>
+            <FlatList
+              data={userPosts}
+              renderItem={({item}) => (
+                <View style={styles.galleryWrapper}>
+                  <Image
+                    style={styles.galleryImage}
+                    source={{uri: createStaticURL(item.avatar)}}
+                  />
+                </View>
+              )}
+              numColumns={3}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+          <BottomSheet isVisible={isVisible}>
+            {list.map((l, i) => (
+              <ListItem
+                key={i}
+                containerStyle={l.containerStyle}
+                onPress={l.onPress}>
+                <ListItem.Content>
+                  <ListItem.Title style={l.titleStyle}>
+                    {l.title}
+                  </ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
+            ))}
+          </BottomSheet>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 };
 

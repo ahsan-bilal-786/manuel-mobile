@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 
 export const styles = StyleSheet.create({
   wrapper: {flex: 1},
@@ -48,4 +48,21 @@ export const styles = StyleSheet.create({
   settingsIcon: {position: 'absolute', top: 20, right: 0, zIndex: 1},
   petThumb: {width: 70, height: 70, borderRadius: 70},
   alignCenter: {textAlign: 'center'},
+  addPostRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  postTitle: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  addPost: {
+    position: 'relative',
+    left: 10,
+    backgroundColor: '#000',
+    borderRadius: 12,
+  },
 });

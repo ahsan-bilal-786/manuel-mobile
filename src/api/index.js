@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-const baseURL = 'http://192.168.10.2:3001';
+const baseURL = 'http://192.168.10.5:3001';
 
 const instance = axios.create({
   baseURL,
@@ -159,7 +159,6 @@ export const updatePetProfile = (
       type: 'image/jpeg',
     });
   }
-  console.log('updatePetProfile{aylpoad:::', payload);
   return instance.put(`/pets/${petId}`, payload, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -174,4 +173,28 @@ export const getPetProfile = (petId) => {
 
 export const getUserPetsList = () => {
   return instance.get('/pets/');
+};
+
+export const getUserPosts = () => {
+  return instance.get('/posts/user');
+};
+
+export const createUserPost = (avatar, description) => {
+  const payload = new FormData();
+  payload.append('description', description);
+  payload.append('profileType', 'user');
+
+  if (avatar) {
+    payload.append('avatar', {
+      uri: Platform.OS === 'android' ? avatar : avatar.replace('file://', ''),
+      name: 'profile.jpg',
+      type: 'image/jpeg',
+    });
+  }
+  return instance.post('/posts/', payload, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      mimeType: 'multipart/form-data',
+    },
+  });
 };

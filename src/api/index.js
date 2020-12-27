@@ -179,10 +179,18 @@ export const getUserPosts = () => {
   return instance.get('/posts/user');
 };
 
-export const createUserPost = (avatar, description) => {
+export const createPost = (
+  avatar,
+  description,
+  profileType,
+  profileId = null,
+) => {
   const payload = new FormData();
   payload.append('description', description);
-  payload.append('profileType', 'user');
+  payload.append('profileType', profileType);
+  if (profileType === 'pet') {
+    payload.append('profileId', profileId);
+  }
 
   if (avatar) {
     payload.append('avatar', {
@@ -199,7 +207,11 @@ export const createUserPost = (avatar, description) => {
   });
 };
 
-export const updateUserPost = (id, description) => {
+export const updatePost = (id, description) => {
   const payload = {description};
   return instance.put(`/posts/${id}`, payload);
+};
+
+export const getPetPosts = (petId) => {
+  return instance.get(`/posts/pet/${petId}`);
 };

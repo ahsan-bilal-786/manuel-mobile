@@ -3,18 +3,21 @@ import {FlatList, View, Text, Image} from 'react-native';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import map from 'lodash/map';
-import {updatePetProfile, getPetProfile, createStaticURL} from 'api';
-import {styles} from 'screens/Pets/styles';
+import ImagePicker from 'react-native-image-picker';
+import {
+  updatePetProfile,
+  getPetProfile,
+  createStaticURL,
+  createPost,
+  updatePost,
+  getPetPosts,
+} from 'api';
+import PostView from 'components/PostView';
+import Modal from 'components/Modals';
 import Form from 'components/Pets/Form';
 import Layout from 'screens/Pets/Layout';
-import photo_1 from '../../assets/images/pets/1.jpg';
-import photo_3 from '../../assets/images/pets/3.jpg';
-import photo_4 from '../../assets/images/pets/4.jpg';
-import photo_5 from '../../assets/images/pets/5.jpg';
-import photo_6 from '../../assets/images/pets/6.jpg';
-import photo_7 from '../../assets/images/pets/7.jpg';
-import photo_8 from '../../assets/images/pets/8.jpg';
-import photo_9 from '../../assets/images/pets/9.jpg';
+import PostsPanel from 'components/Posts';
+import {styles} from 'screens/Pets/styles';
 
 const initialValues = {
   avatar: '',
@@ -23,6 +26,13 @@ const initialValues = {
   age: '',
   weight: '',
   race: '',
+};
+
+const initPostValues = {
+  id: '',
+  date: '',
+  photo: '',
+  description: '',
 };
 
 const validationSchema = Yup.object().shape({
@@ -40,6 +50,8 @@ const validationSchema = Yup.object().shape({
 
 const ProfileScreen = ({navigation, route}) => {
   const [hasSubmitted, handleSubmitted] = useState(false);
+  const [post, handlePost] = useState(initPostValues);
+  const [petPosts, handlePetPosts] = useState([]);
 
   const formik = useFormik({
     initialValues,
@@ -89,6 +101,7 @@ const ProfileScreen = ({navigation, route}) => {
   useEffect(() => {
     const fetchProfile = navigation.addListener('focus', () => {
       fetchPetProfile();
+      fetchPosts();
     });
     // Return the function to fetchProfile from the event so it gets removed on unmount
     return fetchProfile;
@@ -98,6 +111,13 @@ const ProfileScreen = ({navigation, route}) => {
     formik.handleSubmit();
     handleSubmitted(true);
   };
+
+  const handleChangeDescription = (value) =>
+    handlePost({
+      ...post,
+      description: value,
+    });
+
   const handleChange = (fieldId, value) => {
     if (fieldId === 'avatar') {
       handleChangeAvatar(value);
@@ -126,6 +146,73 @@ const ProfileScreen = ({navigation, route}) => {
       });
   };
 
+  const openPost = (item) => {
+    const {avatar, createdAt, description, id} = item;
+    handlePost({
+      id,
+      description,
+      date: createdAt,
+      photo: avatar,
+    });
+  };
+
+  const addPost = () => {
+    let options = {
+      title: 'Select Image',
+      customButtons: [],
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+        privateDirectory: true,
+      },
+    };
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        handlePost({
+          ...initPostValues,
+          photo: response.uri,
+        });
+      }
+    });
+  };
+
+  const closePostModal = () => {
+    handlePost({
+      ...initPostValues,
+    });
+  };
+
+  const fetchPosts = async () => {
+    const posts = await getPetPosts(route.params.petId);
+    handlePetPosts(posts.data);
+  };
+
+  const savePost = async () => {
+    const {id, photo, description} = post;
+    if (id) {
+      const updateResp = await updatePost(id, description);
+      if (updateResp.status === 200) {
+        closePostModal();
+        fetchPosts();
+      }
+    } else {
+      const createResp = await createPost(
+        photo,
+        description,
+        'pet',
+        route.params.petId,
+      );
+      if (createResp.status === 201) {
+        closePostModal();
+        fetchPosts();
+      }
+    }
+  };
+
   return (
     <Layout
       title={formik.values.petName}
@@ -140,28 +227,16 @@ const ProfileScreen = ({navigation, route}) => {
           ))}
         </View>
       )}
-      <View>
-        <FlatList
-          data={[
-            photo_1,
-            photo_3,
-            photo_4,
-            photo_5,
-            photo_9,
-            photo_6,
-            photo_7,
-            photo_8,
-            photo_9,
-          ]}
-          renderItem={({item}) => (
-            <View style={styles.galleryWrapper}>
-              <Image style={styles.galleryImage} source={item} />
-            </View>
-          )}
-          numColumns={3}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
+      <PostsPanel postsList={petPosts} addPost={addPost} openPost={openPost} />
+      {post.photo !== '' && (
+        <Modal handleClose={closePostModal}>
+          <PostView
+            {...post}
+            handleSubmit={savePost}
+            handleChangeDescription={handleChangeDescription}
+          />
+        </Modal>
+      )}
     </Layout>
   );
 };

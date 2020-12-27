@@ -16,14 +16,15 @@ import {
   getUserProfile,
   uploadUserPhoto,
   createStaticURL,
-  createUserPost,
-  updateUserPost,
+  createPost,
+  updatePost,
   getUserPosts,
 } from 'api';
 import {deleteUserToken} from 'utils/asyncStorage';
 import ProfilePhoto from 'components/Photo/Profile';
 import PostView from 'components/PostView';
 import Modal from 'components/Modals';
+import PostsPanel from 'components/Posts';
 import {styles} from 'screens/Profile/styles';
 import cover from '../../assets/images/cover.jpg';
 import avatar from '../../assets/images/avatar.png';
@@ -135,13 +136,13 @@ const ProfileScreen = ({navigation}) => {
   const savePost = async () => {
     const {id, photo, description} = post;
     if (id) {
-      const updateResp = await updateUserPost(id, description);
+      const updateResp = await updatePost(id, description);
       if (updateResp.status === 200) {
         closePostModal();
         fetchPosts();
       }
     } else {
-      const createResp = await createUserPost(photo, description);
+      const createResp = await createPost(photo, description, 'user');
       if (createResp.status === 201) {
         closePostModal();
         fetchPosts();
@@ -227,31 +228,11 @@ const ProfileScreen = ({navigation}) => {
               keyExtractor={(item, index) => index.toString()}
             />
           </View>
-          <View style={styles.addPostRow}>
-            <Text style={styles.postTitle}>Posts</Text>
-            <TouchableOpacity style={styles.addPost} onPress={addPost}>
-              <Icon name="add" color="#FFF" />
-            </TouchableOpacity>
-          </View>
-
-          <View>
-            <FlatList
-              scrollEnabled={false}
-              data={userPosts}
-              renderItem={({item}) => (
-                <View style={styles.galleryWrapper}>
-                  <TouchableOpacity onPress={() => openPost(item)}>
-                    <Image
-                      style={styles.galleryImage}
-                      source={{uri: createStaticURL(item.avatar)}}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-              numColumns={3}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
+          <PostsPanel
+            addPost={addPost}
+            postsList={userPosts}
+            openPost={openPost}
+          />
         </ScrollView>
 
         <BottomSheet isVisible={isVisible}>

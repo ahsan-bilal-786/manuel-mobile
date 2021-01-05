@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-const baseURL = 'http://192.168.10.5:3001';
+const baseURL = 'http://192.168.10.3:3001';
 
 const instance = axios.create({
   baseURL,
@@ -149,9 +149,8 @@ export const updatePetProfile = (
   payload.append('name', petName);
   payload.append('height', height);
   payload.append('weight', weight);
-  payload.append('dob', dob);
+  payload.append('dob', moment(dob).format('YYYY-MM-DD HH:mm:ss'));
   payload.append('petType', petType);
-
   if (avatar) {
     payload.append('avatar', {
       uri: Platform.OS === 'android' ? avatar : avatar.replace('file://', ''),
